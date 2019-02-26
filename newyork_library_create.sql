@@ -1,0 +1,90 @@
+USE new_york_library;
+
+CREATE TABLE PATRONS (
+	PatronID	       	INTEGER 	      	NOT NULL AUTO_INCREMENT,
+	FirstName       	VARCHAR(15) 	    NOT NULL,
+	LastName          	VARCHAR(15)        	NOT NULL,
+	StreetAddress  	  	VARCHAR(25) 	    NOT NULL,
+	City	     	  	VARCHAR(20) 	    NOT NULL,
+	State		   	    CHAR(2)		  		NOT NULL,
+    ZipCode				INTEGER(5)			NOT NULL,
+    PhoneNumber			BIGINT(10)			NOT NULL,
+    Age					INTEGER(3)			NULL,
+    Gender				CHAR(1)				NULL,
+    LateFees			DECIMAL(9,2)		NOT NULL,
+	CONSTRAINT 		    PATRON_PK		 	PRIMARY KEY (PatronID)
+	);
+
+ALTER TABLE PATRONS AUTO_INCREMENT = 0;
+
+
+CREATE TABLE BIBLIOGRAPHY (
+	CallNum			    VARCHAR(10)      	NOT NULL,
+	Title			   	VARCHAR(75) 	    NOT NULL,
+	Author		  	    VARCHAR(30)      	NOT NULL,
+	Department		    VARCHAR(10)     	NOT NULL,
+    SubjectArea			VARCHAR(20)			NOT NULL,
+    Edition				INTEGER				NOT NULL,
+    PlaceOfPublication	VARCHAR(30)			NOT NULL,
+    YearOfPublication	INTEGER(4)			NOT NULL,
+    Quantity			INTEGER				NOT NULL,
+	CONSTRAINT 		    CALLNUM_PK	     	PRIMARY KEY (CallNum)
+	);
+
+CREATE TABLE ORDERS (
+	OrderID			    INTEGER		       	NOT NULL AUTO_INCREMENT,
+	CallNum			    VARCHAR(10)	    	NOT NULL,
+	Buyer			  	VARCHAR(30)		    NOT NULL,
+	DatePurchased	    DATE		       	NOT NULL,
+	QuantityPurchased   INTEGER		       	NOT NULL,
+    BaseCost			DECIMAL(9,2)		NOT NULL,
+    TotalCost			DECIMAL(9,2)		NOT NULL,
+	CONSTRAINT 		    ORDERID_PK 	   		PRIMARY KEY (OrderID),
+    CONSTRAINT			BIB_ORDERS_CALLNUM_FK	FOREIGN KEY (CallNum)
+							REFERENCES BIBLIOGRAPHY (CallNum)
+	);
+
+ALTER TABLE ORDERS AUTO_INCREMENT = 0;
+
+CREATE TABLE ITEM_DATA (
+	ItemID		  	    INTEGER  	       	NOT NULL,
+	CallNum			   	VARCHAR(10)	     	NOT NULL,
+    OrderID				INTEGER				NULL,
+	Availability	    CHAR(1) 	       	NOT NULL,
+	DateLastCheckedOut  DATE		     	NULL,
+	ItemCondition	   	CHAR(20)	     	NULL,
+	CONSTRAINT 		    ITEMID_PK 	 	PRIMARY KEY (ItemID),
+	CONSTRAINT 		    BIB_ITEM_CALLNUM_FK 	FOREIGN KEY (CallNum)
+							REFERENCES  BIBLIOGRAPHY (CallNum),
+	CONSTRAINT 		    ORDERS_ITEM_ORDERID_FK FOREIGN KEY (OrderID)
+							REFERENCES  ORDERS (OrderID)
+	);
+
+
+CREATE TABLE REQUESTS (
+	RequestID		    INTEGER  	       	NOT NULL AUTO_INCREMENT,
+	CallNum			    VARCHAR(10)	       	NOT NULL,
+	PatronID		   	INTEGER		     	NOT NULL,
+	QueueNum	 	  	INTEGER  	       	NOT NULL,
+	CONSTRAINT 		    REQUESTS_PK 	  	PRIMARY KEY (RequestID),
+	CONSTRAINT 		    ITEM_REQ_CALLNUM_FK	FOREIGN KEY (CallNum)
+							REFERENCES	BIBLIOGRAPHY (CallNum),
+	CONSTRAINT 		    PATRON_REQ_PATRONID_FK	FOREIGN KEY (PatronID)
+							REFERENCES	PATRONS (PatronID)
+	);
+
+ALTER TABLE REQUESTS AUTO_INCREMENT = 0;
+    
+CREATE TABLE CHECKED_OUT (
+	TransactionID	INTEGER		NOT NULL AUTO_INCREMENT,
+    PatronID		INTEGER		NOT NULL,
+	ItemID 			INTEGER 	NOT NULL,
+	DueDate			DATE		NOT NULL,
+	CONSTRAINT 		CHECKED_PK 	PRIMARY KEY (TransactionID),
+	CONSTRAINT		PATRON_CHECK_PATRONID_FK	FOREIGN KEY (PatronID)
+							REFERENCES	PATRONS (PatronID),
+	CONSTRAINT		ITEM_CHECK_ITEMID_FK	FOREIGN KEY (ItemID)
+							REFERENCES	ITEM_DATA (ItemID)
+	);
+
+ALTER TABLE CHECKED_OUT AUTO_INCREMENT = 0;
