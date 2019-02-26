@@ -1,5 +1,4 @@
 USE new_york_library;
-
 CREATE TABLE PATRONS (
 	PatronID	       	INTEGER 	      	NOT NULL AUTO_INCREMENT,
 	FirstName       	VARCHAR(15) 	    NOT NULL,
