@@ -1,5 +1,4 @@
 USE new_york_library;
-
 /***   PATRONS data   ******************************************************/
 
 INSERT INTO PATRONS VALUES (
